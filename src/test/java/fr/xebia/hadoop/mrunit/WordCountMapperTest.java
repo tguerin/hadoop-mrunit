@@ -17,7 +17,7 @@ import org.junit.Test;
 /**
  * Test class for {@link WordCountMapper}
  * 
- * @author tomtom
+ * @author Tom
  */
 public class WordCountMapperTest {
 

@@ -17,7 +17,7 @@ import fr.xebia.hadoop.mrunit.WordCountReducer.WordsLength;
 /**
  * Test class for {@link WordCountReducer}
  * 
- * @author tomtom
+ * @author Tom
  */
 public class WordCountReducerTest {
 

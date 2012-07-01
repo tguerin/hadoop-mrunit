@@ -15,10 +15,6 @@ import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author tomtom
- * 
- */
 public class WordCountJobRunner extends Configured implements Tool {
 
     private static final Logger LOG = LoggerFactory.getLogger(WordCountJobRunner.class);
