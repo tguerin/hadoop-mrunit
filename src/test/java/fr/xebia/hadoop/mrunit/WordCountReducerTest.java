@@ -42,8 +42,7 @@ public class WordCountReducerTest {
     public void givenKeyWithIntWritableList_shouldDoTheSum_assertionWithMrunitForOutput() throws Exception {
 	// Given
 	Text firstKey = new Text("key1");
-	wcReduceDriver//
-		.withInput(firstKey, buildValues(5))//
+	wcReduceDriver.withInput(firstKey, buildValues(5))//
 		.withOutput(firstKey, new IntWritable(5));
 
 	// When & Then

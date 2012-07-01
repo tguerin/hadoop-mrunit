@@ -1,5 +1,6 @@
 package fr.xebia.hadoop.mrunit;
 
+import static fr.xebia.hadoop.mrunit.MapReduceTestUtils.buildExpectedOutput;
 import static fr.xebia.hadoop.mrunit.WordCountJobRunner.KEY_IGNORED_WORDS;
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -42,24 +43,22 @@ public class WordCountMapperTest {
 	assertThat(outputs).hasSize(2);
 
 	Pair<Text, IntWritable> firstOutput = outputs.get(0);
-	assertThat(firstOutput).isEqualTo(buildExpectedOutput("de"));
+	assertThat(firstOutput).isEqualTo(buildExpectedOutput(new Text("de"), EXPECTED_COUNT));
 
 	Pair<Text, IntWritable> secondOutput = outputs.get(1);
-	assertThat(secondOutput).isEqualTo(buildExpectedOutput("dede"));
+	assertThat(secondOutput).isEqualTo(buildExpectedOutput(new Text("dede"), EXPECTED_COUNT));
     }
 
     @Test
     public void givenTextInput_shouldOutputEachWordAsKeyAndOneAsValue_assertionWithMrunitForOutput() throws Exception {
 	// Given
-	wcMapDriver.withInput(PAIR_INPUT)//
-		.withOutput(buildExpectedOutput("de")).withOutput(buildExpectedOutput("dede"));
+	wcMapDriver.withInput(PAIR_INPUT)
+		//
+		.withOutput(buildExpectedOutput(new Text("de"), EXPECTED_COUNT))
+		.withOutput(buildExpectedOutput(new Text("dede"), EXPECTED_COUNT));
 
 	// When & Then
 	wcMapDriver.runTest();
-    }
-
-    private Pair<Text, IntWritable> buildExpectedOutput(String word) {
-	return new Pair<Text, IntWritable>(new Text(word), EXPECTED_COUNT);
     }
 
     @Test
