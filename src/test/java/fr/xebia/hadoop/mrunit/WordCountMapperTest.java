@@ -3,10 +3,7 @@ package fr.xebia.hadoop.mrunit;
 import static fr.xebia.hadoop.mrunit.WordCountJobRunner.KEY_IGNORED_WORDS;
 import static org.fest.assertions.Assertions.assertThat;
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
@@ -25,7 +22,7 @@ import org.junit.Test;
 public class WordCountMapperTest {
 
     private static final LongWritable KEY_INPUT = new LongWritable(1);
-    private static final Text TEXT_INPUT = new Text("de dede de dedede dede dedede de de de dede de");
+    private static final Text TEXT_INPUT = new Text("de dede ");
     private static final Pair<LongWritable, Text> PAIR_INPUT = new Pair<LongWritable, Text>(KEY_INPUT, TEXT_INPUT);
 
     private static final IntWritable EXPECTED_COUNT = new IntWritable(1);
@@ -42,26 +39,27 @@ public class WordCountMapperTest {
 	List<Pair<Text, IntWritable>> outputs = wcMapDriver.withInput(PAIR_INPUT).run();
 
 	// Then
-	Iterator<Pair<Text, IntWritable>> outputsIt = outputs.iterator();
-	StringTokenizer tokenizer = new StringTokenizer(TEXT_INPUT.toString());
-	while (tokenizer.hasMoreTokens()) {
-	    Pair<Text, IntWritable> output = outputsIt.next();
-	    assertThat(tokenizer.nextToken()).isEqualTo(output.getFirst().toString());
-	    assertThat(EXPECTED_COUNT).isEqualTo(output.getSecond());
-	}
+	assertThat(outputs).hasSize(2);
+
+	Pair<Text, IntWritable> firstOutput = outputs.get(0);
+	assertThat(firstOutput).isEqualTo(buildExpectedOutput("de"));
+
+	Pair<Text, IntWritable> secondOutput = outputs.get(1);
+	assertThat(secondOutput).isEqualTo(buildExpectedOutput("dede"));
     }
 
     @Test
     public void givenTextInput_shouldOutputEachWordAsKeyAndOneAsValue_assertionWithMrunitForOutput() throws Exception {
 	// Given
-	wcMapDriver.withInput(PAIR_INPUT);
-	StringTokenizer tokenizer = new StringTokenizer(TEXT_INPUT.toString());
-	while (tokenizer.hasMoreTokens()) {
-	    wcMapDriver.withOutput(new Pair<Text, IntWritable>(new Text(tokenizer.nextToken()), EXPECTED_COUNT));
-	}
+	wcMapDriver.withInput(PAIR_INPUT)//
+		.withOutput(buildExpectedOutput("de")).withOutput(buildExpectedOutput("dede"));
 
 	// When & Then
 	wcMapDriver.runTest();
+    }
+
+    private Pair<Text, IntWritable> buildExpectedOutput(String word) {
+	return new Pair<Text, IntWritable>(new Text(word), EXPECTED_COUNT);
     }
 
     @Test
@@ -71,16 +69,6 @@ public class WordCountMapperTest {
 	Configuration configuration = new Configuration();
 	configuration.set(KEY_IGNORED_WORDS, ignoredWords);
 	wcMapDriver.withInput(PAIR_INPUT).withConfiguration(configuration);
-
-	StringTokenizer tokenizer = new StringTokenizer(TEXT_INPUT.toString());
-	String token = null;
-	List<String> ignoredWordsList = Arrays.asList(ignoredWords.split(";"));
-	while (tokenizer.hasMoreTokens()) {
-	    token = tokenizer.nextToken();
-	    if (ignoredWordsList.contains(token)) {
-		wcMapDriver.withOutput(new Pair<Text, IntWritable>(new Text(token), EXPECTED_COUNT));
-	    }
-	}
 
 	// When & Then
 	wcMapDriver.runTest();

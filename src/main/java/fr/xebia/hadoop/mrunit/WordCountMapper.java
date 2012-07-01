@@ -34,7 +34,7 @@ public final class WordCountMapper extends Mapper<LongWritable, Text, Text, IntW
 	String token = null;
 	while (tokenizer.hasMoreTokens()) {
 	    token = tokenizer.nextToken();
-	    if (ignoredWords == null || ignoredWords.contains(token)) {
+	    if (ignoredWords == null || !ignoredWords.contains(token)) {
 		word.set(token);
 		context.write(word, ONE);
 	    }
