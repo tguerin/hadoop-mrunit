@@ -25,13 +25,13 @@ public class WordCountJobRunner extends Configured implements Tool {
     private static final int KO_CODE = 1;
 
     public static void main(final String[] args) {
+	int exitCode = KO_CODE;
 	try {
-	    ToolRunner.run(new Configuration(), new WordCountJobRunner(), args);
+	    exitCode = ToolRunner.run(new Configuration(), new WordCountJobRunner(), args);
 	} catch (Exception e) {
 	    LOG.error("Failed job", e);
-	    System.exit(KO_CODE);
 	}
-	System.exit(OK_CODE);
+	System.exit(exitCode);
     }
 
     @Override
