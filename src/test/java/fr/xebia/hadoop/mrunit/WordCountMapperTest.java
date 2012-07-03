@@ -31,45 +31,44 @@ public class WordCountMapperTest {
     private static final String ignoredWords = "de;dede";
 
     private final Mapper<LongWritable, Text, Text, IntWritable> wcMapper = new WordCountMapper();
-    private final MapDriver<LongWritable, Text, Text, IntWritable> wcMapDriver = new MapDriver<LongWritable, Text, Text, IntWritable>(
-	    wcMapper);
+    private final MapDriver<LongWritable, Text, Text, IntWritable> wcMapDriver = MapDriver.newMapDriver(wcMapper);
 
     @Test
     public void givenTextInput_shouldOutputEachWordAsKeyAndOneAsValue_noAssertionWithMrunitForOutput() throws Exception {
-	// When
-	List<Pair<Text, IntWritable>> outputs = wcMapDriver.withInput(PAIR_INPUT).run();
+        // When
+        List<Pair<Text, IntWritable>> outputs = wcMapDriver.withInput(PAIR_INPUT).run();
 
-	// Then
-	assertThat(outputs).hasSize(2);
+        // Then
+        assertThat(outputs).hasSize(2);
 
-	Pair<Text, IntWritable> firstOutput = outputs.get(0);
-	assertThat(firstOutput).isEqualTo(buildExpectedOutput(new Text("de"), EXPECTED_COUNT));
+        Pair<Text, IntWritable> firstOutput = outputs.get(0);
+        assertThat(firstOutput).isEqualTo(buildExpectedOutput(new Text("de"), EXPECTED_COUNT));
 
-	Pair<Text, IntWritable> secondOutput = outputs.get(1);
-	assertThat(secondOutput).isEqualTo(buildExpectedOutput(new Text("dede"), EXPECTED_COUNT));
+        Pair<Text, IntWritable> secondOutput = outputs.get(1);
+        assertThat(secondOutput).isEqualTo(buildExpectedOutput(new Text("dede"), EXPECTED_COUNT));
     }
 
     @Test
     public void givenTextInput_shouldOutputEachWordAsKeyAndOneAsValue_assertionWithMrunitForOutput() throws Exception {
-	// Given
-	wcMapDriver.withInput(PAIR_INPUT)
-		//
-		.withOutput(buildExpectedOutput(new Text("de"), EXPECTED_COUNT))
-		.withOutput(buildExpectedOutput(new Text("dede"), EXPECTED_COUNT));
+        // Given
+        wcMapDriver.withInput(PAIR_INPUT)
+                //
+                .withOutput(buildExpectedOutput(new Text("de"), EXPECTED_COUNT))
+                .withOutput(buildExpectedOutput(new Text("dede"), EXPECTED_COUNT));
 
-	// When & Then
-	wcMapDriver.runTest();
+        // When & Then
+        wcMapDriver.runTest();
     }
 
     @Test
     public void givenTextInputWithIgnoredWordsInConf_shouldOutputEachWordIfNotIgnoredAsKeyAndOneAsValue()
-	    throws Exception {
-	// Given
-	Configuration configuration = new Configuration();
-	configuration.set(KEY_IGNORED_WORDS, ignoredWords);
-	wcMapDriver.withInput(PAIR_INPUT).withConfiguration(configuration);
+            throws Exception {
+        // Given
+        Configuration configuration = new Configuration();
+        configuration.set(KEY_IGNORED_WORDS, ignoredWords);
+        wcMapDriver.withInput(PAIR_INPUT).withConfiguration(configuration);
 
-	// When & Then
-	wcMapDriver.runTest();
+        // When & Then
+        wcMapDriver.runTest();
     }
 }

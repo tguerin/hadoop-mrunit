@@ -25,32 +25,33 @@ public class WordCountJobRunnerTest {
     private static final Text TEXT_INPUT = new Text("de dede dede de");
     private static final Pair<LongWritable, Text> PAIR_INPUT = new Pair<LongWritable, Text>(KEY_INPUT, TEXT_INPUT);
 
-    private final MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable> wordCountMapReduce = new MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable>();
+    private final MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable> wordCountMapReduce = MapReduceDriver
+            .newMapReduceDriver();
 
     @Before
     public void setUp() {
-	wordCountMapReduce.withMapper(new WordCountMapper());
-	wordCountMapReduce.withReducer(new WordCountReducer());
+        wordCountMapReduce.withMapper(new WordCountMapper());
+        wordCountMapReduce.withReducer(new WordCountReducer());
     }
 
     @Test
     public void testMapReduce() {
-	// Given
-	wordCountMapReduce.withInput(PAIR_INPUT)//
-		.withOutput(buildExpectedOutput(new Text("de"), new IntWritable(2)))//
-		.withOutput(buildExpectedOutput(new Text("dede"), new IntWritable(2)));
-	// When & Then
-	wordCountMapReduce.runTest();
+        // Given
+        wordCountMapReduce.withInput(PAIR_INPUT)//
+                .withOutput(buildExpectedOutput(new Text("de"), new IntWritable(2)))//
+                .withOutput(buildExpectedOutput(new Text("dede"), new IntWritable(2)));
+        // When & Then
+        wordCountMapReduce.runTest();
     }
 
     @Test
     public void testMapReduceWithCombiner() {
-	// Given
-	wordCountMapReduce.withInput(PAIR_INPUT)//
-		.withCombiner(new WordCountReducer())//
-		.withOutput(buildExpectedOutput(new Text("de"), new IntWritable(2)))//
-		.withOutput(buildExpectedOutput(new Text("dede"), new IntWritable(2)));
-	// When & Then
-	wordCountMapReduce.runTest();
+        // Given
+        wordCountMapReduce.withInput(PAIR_INPUT)//
+                .withCombiner(new WordCountReducer())//
+                .withOutput(buildExpectedOutput(new Text("de"), new IntWritable(2)))//
+                .withOutput(buildExpectedOutput(new Text("dede"), new IntWritable(2)));
+        // When & Then
+        wordCountMapReduce.runTest();
     }
 }

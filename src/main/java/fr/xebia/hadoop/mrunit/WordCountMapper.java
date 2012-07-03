@@ -20,23 +20,23 @@ public final class WordCountMapper extends Mapper<LongWritable, Text, Text, IntW
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
-	super.setup(context);
-	String ignoredWordsFromConf = context.getConfiguration().get(KEY_IGNORED_WORDS);
-	if (!isNullOrEmpty(ignoredWordsFromConf)) {
-	    ignoredWords = newArrayList(ignoredWordsFromConf.split(";"));
-	}
+        super.setup(context);
+        String ignoredWordsFromConf = context.getConfiguration().get(KEY_IGNORED_WORDS);
+        if (!isNullOrEmpty(ignoredWordsFromConf)) {
+            ignoredWords = newArrayList(ignoredWordsFromConf.split(";"));
+        }
     }
 
     @Override
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-	StringTokenizer tokenizer = new StringTokenizer(value.toString());
-	String token = null;
-	while (tokenizer.hasMoreTokens()) {
-	    token = tokenizer.nextToken();
-	    if (ignoredWords == null || !ignoredWords.contains(token)) {
-		word.set(token);
-		context.write(word, ONE);
-	    }
-	}
+        StringTokenizer tokenizer = new StringTokenizer(value.toString());
+        String token = null;
+        while (tokenizer.hasMoreTokens()) {
+            token = tokenizer.nextToken();
+            if (ignoredWords == null || !ignoredWords.contains(token)) {
+                word.set(token);
+                context.write(word, ONE);
+            }
+        }
     }
 }
