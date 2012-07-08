@@ -50,25 +50,18 @@ public class WordCountMapperTest {
 
     @Test
     public void givenTextInput_shouldOutputEachWordAsKeyAndOneAsValue_assertionWithMrunitForOutput() throws Exception {
-        // Given
-        wcMapDriver.withInput(PAIR_INPUT)
-                //
-                .withOutput(buildExpectedOutput(new Text("de"), EXPECTED_COUNT))
-                .withOutput(buildExpectedOutput(new Text("dede"), EXPECTED_COUNT));
-
-        // When & Then
-        wcMapDriver.runTest();
+        wcMapDriver.withInput(PAIR_INPUT)//
+                .withOutput(buildExpectedOutput(new Text("de"), EXPECTED_COUNT))//
+                .withOutput(buildExpectedOutput(new Text("dede"), EXPECTED_COUNT))//
+                .runTest();
     }
 
     @Test
     public void givenTextInputWithIgnoredWordsInConf_shouldOutputEachWordIfNotIgnoredAsKeyAndOneAsValue()
             throws Exception {
-        // Given
         Configuration configuration = new Configuration();
         configuration.set(KEY_IGNORED_WORDS, ignoredWords);
-        wcMapDriver.withInput(PAIR_INPUT).withConfiguration(configuration);
 
-        // When & Then
-        wcMapDriver.runTest();
+        wcMapDriver.withInput(PAIR_INPUT).withConfiguration(configuration).runTest();
     }
 }

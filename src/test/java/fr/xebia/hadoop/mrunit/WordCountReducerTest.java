@@ -40,13 +40,10 @@ public class WordCountReducerTest {
 
     @Test
     public void givenKeyWithIntWritableList_shouldDoTheSum_assertionWithMrunitForOutput() throws Exception {
-        // Given
         Text firstKey = new Text("key1");
         wcReduceDriver.withInput(firstKey, buildValues(5))//
-                .withOutput(firstKey, new IntWritable(5));
-
-        // When & Then
-        wcReduceDriver.runTest();
+                .withOutput(firstKey, new IntWritable(5))//
+                .runTest();
     }
 
     private List<IntWritable> buildValues(int nbValues) {
@@ -59,16 +56,12 @@ public class WordCountReducerTest {
 
     @Test
     public void givenKey_shouldIncrementStartsWithLetterAndAllCountersByOne() throws Exception {
-        // Given
         Text firstKey = new Text("key1");
-        wcReduceDriver//
-                .withInput(firstKey, buildValues(5))//
+        wcReduceDriver.withInput(firstKey, buildValues(5))//
                 .withOutput(firstKey, new IntWritable(5))//
                 .withCounter(WordsLength.STARTS_WITH_LETTER, 1)//
                 .withCounter(WordsLength.STARTS_WITH_DIGIT, 0)//
-                .withCounter(WordsLength.ALL, 1);
-
-        // When & Then
-        wcReduceDriver.runTest();
+                .withCounter(WordsLength.ALL, 1)//
+                .runTest();
     }
 }

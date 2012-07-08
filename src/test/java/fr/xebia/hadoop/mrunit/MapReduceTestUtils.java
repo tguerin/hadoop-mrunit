@@ -14,7 +14,7 @@ import org.apache.hadoop.mrunit.types.Pair;
 public class MapReduceTestUtils {
 
     public static <T, K> Pair<T, K> buildExpectedOutput(T expectedKey, K expectedValue) {
-	return new Pair<T, K>(expectedKey, expectedValue);
+        return new Pair<T, K>(expectedKey, expectedValue);
     }
 
 }

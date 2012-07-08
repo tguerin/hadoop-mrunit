@@ -36,22 +36,18 @@ public class WordCountJobRunnerTest {
 
     @Test
     public void testMapReduce() {
-        // Given
         wordCountMapReduce.withInput(PAIR_INPUT)//
                 .withOutput(buildExpectedOutput(new Text("de"), new IntWritable(2)))//
-                .withOutput(buildExpectedOutput(new Text("dede"), new IntWritable(2)));
-        // When & Then
-        wordCountMapReduce.runTest();
+                .withOutput(buildExpectedOutput(new Text("dede"), new IntWritable(2)))//
+                .runTest();
     }
 
     @Test
     public void testMapReduceWithCombiner() {
-        // Given
         wordCountMapReduce.withInput(PAIR_INPUT)//
                 .withCombiner(new WordCountReducer())//
                 .withOutput(buildExpectedOutput(new Text("de"), new IntWritable(2)))//
-                .withOutput(buildExpectedOutput(new Text("dede"), new IntWritable(2)));
-        // When & Then
-        wordCountMapReduce.runTest();
+                .withOutput(buildExpectedOutput(new Text("dede"), new IntWritable(2)))//
+                .runTest();
     }
 }
