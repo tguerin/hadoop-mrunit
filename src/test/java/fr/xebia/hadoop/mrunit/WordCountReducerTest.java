@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
 import org.apache.hadoop.mrunit.types.Pair;
 import org.fest.assertions.Assertions;
@@ -21,9 +20,8 @@ import fr.xebia.hadoop.mrunit.WordCountReducer.WordsLength;
  */
 public class WordCountReducerTest {
 
-    private final Reducer<Text, IntWritable, Text, IntWritable> wcReducer = new WordCountReducer();
     private final ReduceDriver<Text, IntWritable, Text, IntWritable> wcReduceDriver = ReduceDriver
-            .newReduceDriver(wcReducer);
+            .newReduceDriver(new WordCountReducer());
 
     @Test
     public void givenKeyWithIntWritableList_shouldDoTheSum_noAssertionWithMrunitForOutput() throws Exception {
@@ -41,7 +39,8 @@ public class WordCountReducerTest {
     @Test
     public void givenKeyWithIntWritableList_shouldDoTheSum_assertionWithMrunitForOutput() throws Exception {
         Text firstKey = new Text("key1");
-        wcReduceDriver.withInput(firstKey, buildValues(5))//
+        wcReduceDriver//
+                .withInput(firstKey, buildValues(5))//
                 .withOutput(firstKey, new IntWritable(5))//
                 .runTest();
     }
@@ -57,7 +56,8 @@ public class WordCountReducerTest {
     @Test
     public void givenKey_shouldIncrementStartsWithLetterAndAllCountersByOne() throws Exception {
         Text firstKey = new Text("key1");
-        wcReduceDriver.withInput(firstKey, buildValues(5))//
+        wcReduceDriver//
+                .withInput(firstKey, buildValues(5))//
                 .withOutput(firstKey, new IntWritable(5))//
                 .withCounter(WordsLength.STARTS_WITH_LETTER, 1)//
                 .withCounter(WordsLength.STARTS_WITH_DIGIT, 0)//

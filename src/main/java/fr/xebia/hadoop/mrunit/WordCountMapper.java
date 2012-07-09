@@ -15,12 +15,10 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 public final class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
     private static final IntWritable ONE = new IntWritable(1);
-    private final Text word = new Text();
-    private List<String> ignoredWords = null;
+    private List<String> ignoredWords = newArrayList();
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
-        super.setup(context);
         String ignoredWordsFromConf = context.getConfiguration().get(KEY_IGNORED_WORDS);
         if (!isNullOrEmpty(ignoredWordsFromConf)) {
             ignoredWords = newArrayList(ignoredWordsFromConf.split(";"));
@@ -30,12 +28,10 @@ public final class WordCountMapper extends Mapper<LongWritable, Text, Text, IntW
     @Override
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         StringTokenizer tokenizer = new StringTokenizer(value.toString());
-        String token = null;
         while (tokenizer.hasMoreTokens()) {
-            token = tokenizer.nextToken();
-            if (ignoredWords == null || !ignoredWords.contains(token)) {
-                word.set(token);
-                context.write(word, ONE);
+            String token = tokenizer.nextToken();
+            if (!ignoredWords.contains(token)) {
+                context.write(new Text(token), ONE);
             }
         }
     }

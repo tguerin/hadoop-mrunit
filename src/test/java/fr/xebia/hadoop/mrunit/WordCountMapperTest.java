@@ -10,7 +10,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mrunit.mapreduce.MapDriver;
 import org.apache.hadoop.mrunit.types.Pair;
 import org.junit.Test;
@@ -22,37 +21,35 @@ import org.junit.Test;
  */
 public class WordCountMapperTest {
 
-    private static final LongWritable KEY_INPUT = new LongWritable(1);
-    private static final Text TEXT_INPUT = new Text("de dede ");
-    private static final Pair<LongWritable, Text> PAIR_INPUT = new Pair<LongWritable, Text>(KEY_INPUT, TEXT_INPUT);
-
     private static final IntWritable EXPECTED_COUNT = new IntWritable(1);
 
-    private static final String ignoredWords = "de;dede";
+    private static final String ignoredWords = "word1;word2";
 
-    private final Mapper<LongWritable, Text, Text, IntWritable> wcMapper = new WordCountMapper();
-    private final MapDriver<LongWritable, Text, Text, IntWritable> wcMapDriver = MapDriver.newMapDriver(wcMapper);
+    private final MapDriver<LongWritable, Text, Text, IntWritable> wcMapDriver = MapDriver
+            .newMapDriver(new WordCountMapper());
 
     @Test
     public void givenTextInput_shouldOutputEachWordAsKeyAndOneAsValue_noAssertionWithMrunitForOutput() throws Exception {
         // When
-        List<Pair<Text, IntWritable>> outputs = wcMapDriver.withInput(PAIR_INPUT).run();
+        List<Pair<Text, IntWritable>> outputs = wcMapDriver.withInput(new LongWritable(1), new Text("word1 word2 "))
+                .run();
 
         // Then
         assertThat(outputs).hasSize(2);
 
         Pair<Text, IntWritable> firstOutput = outputs.get(0);
-        assertThat(firstOutput).isEqualTo(buildExpectedOutput(new Text("de"), EXPECTED_COUNT));
+        assertThat(firstOutput).isEqualTo(buildExpectedOutput(new Text("word1"), EXPECTED_COUNT));
 
         Pair<Text, IntWritable> secondOutput = outputs.get(1);
-        assertThat(secondOutput).isEqualTo(buildExpectedOutput(new Text("dede"), EXPECTED_COUNT));
+        assertThat(secondOutput).isEqualTo(buildExpectedOutput(new Text("word2"), EXPECTED_COUNT));
     }
 
     @Test
     public void givenTextInput_shouldOutputEachWordAsKeyAndOneAsValue_assertionWithMrunitForOutput() throws Exception {
-        wcMapDriver.withInput(PAIR_INPUT)//
-                .withOutput(buildExpectedOutput(new Text("de"), EXPECTED_COUNT))//
-                .withOutput(buildExpectedOutput(new Text("dede"), EXPECTED_COUNT))//
+        wcMapDriver//
+                .withInput(new LongWritable(1), new Text("word1 word2 "))//
+                .withOutput(buildExpectedOutput(new Text("word1"), EXPECTED_COUNT))//
+                .withOutput(buildExpectedOutput(new Text("word2"), EXPECTED_COUNT))//
                 .runTest();
     }
 
@@ -62,6 +59,6 @@ public class WordCountMapperTest {
         Configuration configuration = new Configuration();
         configuration.set(KEY_IGNORED_WORDS, ignoredWords);
 
-        wcMapDriver.withInput(PAIR_INPUT).withConfiguration(configuration).runTest();
+        wcMapDriver.withConfiguration(configuration).withInput(new LongWritable(1), new Text("word1 word2 ")).runTest();
     }
 }
